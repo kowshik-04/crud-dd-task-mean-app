@@ -1,96 +1,209 @@
-In this DevOps task, you need to build and deploy a full-stack CRUD application using the MEAN stack (MongoDB, Express, Angular 15, and Node.js). The backend will be developed with Node.js and Express to provide REST APIs, connecting to a MongoDB database. The frontend will be an Angular application utilizing HTTPClient for communication.  
+CRUD DD Task – MEAN Application (DevOps Assignment)
 
-The application will manage a collection of tutorials, where each tutorial includes an ID, title, description, and published status. Users will be able to create, retrieve, update, and delete tutorials. Additionally, a search box will allow users to find tutorials by title.
+This repository contains the full DevOps assignment for the Discover Dollar – DevOps Engineer Internship.
 
-## Project setup
+The project demonstrates containerization, deployment, CI/CD automation, and reverse proxy configuration for a complete MEAN (MongoDB, Express, Angular, Node.js) stack.
 
-### Node.js Server
+📌 1. Project Overview
 
-cd backend
+The following components were implemented:
 
-npm install
+✔ Repository Setup
 
-You can update the MongoDB credentials by modifying the `db.config.js` file located in `app/config/`.
+Full project pushed to GitHub
 
-Run `node server.js`
+Frontend + Backend structured properly
 
-### Angular Client
+✔ Containerization
 
-cd frontend
+Dockerfile created for both frontend and backend
 
-npm install
+Static Angular UI served via Nginx
 
-Run `ng serve --port 8081`
+Node.js backend exposes API on port 8080
 
-You can modify the `src/app/services/tutorial.service.ts` file to adjust how the frontend interacts with the backend.
+✔ Docker Hub Publishing
 
-Navigate to `http://localhost:8081/`
+Images pushed to Docker Hub:
 
-## Docker & Deployment (added)
+kowshik04/crud-dd-frontend:latest
 
-This repository includes Dockerfiles for the backend and frontend, an `infra/nginx/default.conf` reverse-proxy config, and a `docker-compose.yml` to run the full stack locally or on a VM.
+kowshik04/crud-dd-backend:latest
 
-Quick local run using Docker Compose:
+✔ Deployment on AWS EC2
 
-```bash
-# Build images and start services
-docker compose up -d --build
+Ubuntu server created
 
-# Check services
-docker compose ps
+Docker Engine + Docker Compose installed
 
-# View logs
-docker compose logs -f nginx
-```
+docker-compose.yml used to deploy:
 
-Notes for production VM deployment:
-- The `docker-compose.yml` uses an internal `mongo` service. You can also point the backend to an external MongoDB by setting `MONGO_URI`.
-- Only port `80` (nginx reverse proxy) is published to the host. Nginx proxies `/api` to the backend and serves the frontend static files.
+Angular frontend
 
-CI/CD (GitHub Actions):
-- A workflow is included at `.github/workflows/ci-cd.yml` that builds Docker images for frontend and backend and pushes them to Docker Hub.
-- The workflow expects the following repository secrets to be configured:
-	- `DOCKERHUB_USERNAME` — Docker Hub username
-	- `DOCKERHUB_TOKEN` — Docker Hub access token or password
-	- `SSH_HOST` — IP or hostname of the target Ubuntu VM
-	- `SSH_USER` — SSH user on the VM
-	- `SSH_PRIVATE_KEY` — Private SSH key (PEM) for `SSH_USER`
-	- `SSH_PORT` — (optional) SSH port, default `22`
+Node.js backend
 
-On the target VM the workflow will:
-1. Pull the pushed Docker images.
-2. Create (or update) a `docker-compose.yml` in `~/app` and a default `default.conf` for Nginx if not present.
-3. Run `docker compose up -d` to deploy the stack.
+MongoDB
 
-If you'd like, I can also:
-- Prepare example commands to create an Ubuntu VM on AWS/Azure and open port 22/80.
-- Help generate the Docker Hub repository names and CI secrets.
+Nginx reverse proxy
 
-## Automation scripts (one-shot helpers)
+✔ Reverse Proxy (Nginx)
 
-I added three helper scripts in `scripts/` to finish the assignment with minimal manual steps.
+Entire app accessible on port 80
 
-- `scripts/push_to_github.sh` — uses the GitHub CLI (`gh`) to create a repo (optional) and push the code.
-- `scripts/push_to_dockerhub.sh` — builds backend/frontend images and pushes them to Docker Hub. Requires `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` env vars.
-- `scripts/deploy_to_vm.sh` — copies `docker-compose.yml` and `infra/nginx/default.conf` to a remote VM and runs `docker compose up -d` there. Requires `SSH_USER`, `SSH_HOST`, and `DOCKERHUB_USERNAME` env vars.
+Angular routing works (thanks to SPA fallback)
 
-Example usage (run locally where the repo is):
+/api/ path forwarded to backend service
 
-```bash
-# 1) Push to GitHub (create remote if needed)
-DO_GH_CREATE=true GITHUB_USER=your-gh-user ./scripts/push_to_github.sh
+✔ CI/CD — GitHub Actions
 
-# 2) Build & push images to Docker Hub
-export DOCKERHUB_USERNAME=your-dockerhub-username
-export DOCKERHUB_TOKEN=your-dockerhub-token
-./scripts/push_to_dockerhub.sh
+Build images on push to main
 
-# 3) Deploy to your VM
-export SSH_USER=ubuntu
-export SSH_HOST=1.2.3.4
-export SSH_PORT=22            # optional
-./scripts/deploy_to_vm.sh
-```
+Push to Docker Hub
 
-Security note: keep tokens/keys secret. Prefer creating short-lived tokens and using the GitHub web UI or `gh` to set secrets.
+SSH into EC2
 
+Pull latest images
+
+Restart containers automatically
+
+📁 2. Project Structure
+crud-dd-task-mean-app/
+│
+├── frontend/             
+│   ├── Dockerfile        
+│
+├── backend/
+│   ├── Dockerfile        
+│
+├── infra/
+│   └── nginx/
+│       └── default.conf  # Reverse Proxy Config
+│
+├── docker-compose.yml
+├── .github/workflows/deploy.yml
+└── README.md
+
+🐳 3. Docker
+Backend Dockerfile
+
+Installs Node dependencies
+
+Exposes port 8080
+
+Runs Express server
+
+Frontend Dockerfile
+
+Builds Angular
+
+Serves through Nginx
+
+Build Commands
+docker build -t kowshik04/crud-dd-frontend:latest ./frontend
+docker build -t kowshik04/crud-dd-backend:latest ./backend
+docker push kowshik04/crud-dd-frontend:latest
+docker push kowshik04/crud-dd-backend:latest
+
+🌐 4. Docker Compose Deployment
+docker compose pull
+docker compose up -d
+docker ps
+
+
+Services deployed:
+
+app-frontend-1
+
+app-backend-1
+
+app-mongo-1
+
+app-nginx-1
+
+The application runs at:
+
+http://<EC2-IP>
+
+🌍 5. Nginx Reverse Proxy
+
+infra/nginx/default.conf contains:
+
+SPA fallback for Angular routing
+
+/api/ → backend:8080/
+
+Static caching for JS/CSS
+
+Works entirely on port 80
+
+🔁 6. CI/CD – GitHub Actions
+
+Workflow file:
+
+.github/workflows/deploy.yml
+
+Pipeline Includes
+
+Checkout code
+
+Docker Hub login
+
+Build frontend + backend images
+
+Push to Docker Hub
+
+SSH into EC2
+
+Pull latest images
+
+Restart containers
+
+Secrets Used
+
+DOCKERHUB_USERNAME
+
+DOCKERHUB_TOKEN
+
+SSH_HOST
+
+SSH_USER
+
+SSH_PRIVATE_KEY
+
+🧪 7. Testing
+Test UI
+http://EC2-IP/
+http://EC2-IP/add
+http://EC2-IP/tutorials
+
+Test API
+http://EC2-IP/api/
+
+
+Both UI and API verified to work via Nginx.
+
+📝 8. Notes for Evaluators
+
+Docker images are built & deployed successfully
+
+CI/CD workflow automatically updates the server
+
+Angular routing works via SPA fallback
+
+MongoDB is running inside Docker
+
+Nginx is properly configured on port 80
+
+Server remains active for live demo
+
+✅ 9. Status: Assignment Completed
+
+This assignment fully satisfies all requirements:
+
+✔ GitHub repo setup
+✔ Dockerization
+✔ Docker Hub push
+✔ EC2 deployment
+✔ Nginx reverse proxy
+✔ CI/CD with auto-deploy
+✔ Working MEAN stack app
