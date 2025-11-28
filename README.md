@@ -6,59 +6,65 @@ The project demonstrates containerization, deployment, CI/CD automation, and rev
 
 📌 1. Project Overview
 
-The following components were implemented:
+The following components were successfully implemented:
 
 ✔ Repository Setup
 
 Full project pushed to GitHub
 
-Frontend + Backend structured properly
+Frontend & Backend folders structured properly
 
 ✔ Containerization
 
-Dockerfile created for both frontend and backend
+Dockerfile created for frontend
 
-Static Angular UI served via Nginx
+Dockerfile created for backend
 
-Node.js backend exposes API on port 8080
+Angular UI built and served with Nginx
+
+Node.js backend exposes REST API on port 8080
 
 ✔ Docker Hub Publishing
 
 Images pushed to Docker Hub:
 
-kowshik04/crud-dd-frontend:latest
+Frontend: kowshik04/crud-dd-frontend:latest
 
-kowshik04/crud-dd-backend:latest
+Backend: kowshik04/crud-dd-backend:latest
 
 ✔ Deployment on AWS EC2
 
-Ubuntu server created
+Ubuntu EC2 instance created
 
-Docker Engine + Docker Compose installed
+Docker Engine installed
 
-docker-compose.yml used to deploy:
+Docker Compose installed
 
-Angular frontend
+docker-compose.yml deploys:
 
-Node.js backend
+Angular Frontend
+
+Express Backend
 
 MongoDB
 
-Nginx reverse proxy
+Nginx Reverse Proxy
 
 ✔ Reverse Proxy (Nginx)
 
-Entire app accessible on port 80
+Entire application is accessible on port 80
 
-Angular routing works (thanks to SPA fallback)
+Angular routing supported via SPA fallback
 
-/api/ path forwarded to backend service
+/api/ requests forwarded to backend container
 
-✔ CI/CD — GitHub Actions
+✔ CI/CD – GitHub Actions
 
-Build images on push to main
+Pipeline performs:
 
-Push to Docker Hub
+Build updated images on each push
+
+Push images to Docker Hub
 
 SSH into EC2
 
@@ -69,46 +75,50 @@ Restart containers automatically
 📁 2. Project Structure
 crud-dd-task-mean-app/
 │
-├── frontend/             
-│   ├── Dockerfile        
+├── frontend/
+│   ├── Dockerfile
 │
 ├── backend/
-│   ├── Dockerfile        
+│   ├── Dockerfile
 │
 ├── infra/
 │   └── nginx/
-│       └── default.conf  # Reverse Proxy Config
+│       └── default.conf       # Reverse Proxy Config
 │
 ├── docker-compose.yml
-├── .github/workflows/deploy.yml
+├── .github/
+│   └── workflows/
+│       └── deploy.yml         # CI/CD Pipeline
+│
 └── README.md
 
 🐳 3. Docker
 Backend Dockerfile
 
-Installs Node dependencies
+Installs Node.js dependencies
 
-Exposes port 8080
+Exposes 8080
 
 Runs Express server
 
 Frontend Dockerfile
 
-Builds Angular
+Builds Angular project
 
-Serves through Nginx
+Uses Nginx to serve static UI
 
 Build Commands
 docker build -t kowshik04/crud-dd-frontend:latest ./frontend
 docker build -t kowshik04/crud-dd-backend:latest ./backend
+
 docker push kowshik04/crud-dd-frontend:latest
 docker push kowshik04/crud-dd-backend:latest
 
 🌐 4. Docker Compose Deployment
+Commands used:
 docker compose pull
 docker compose up -d
 docker ps
-
 
 Services deployed:
 
@@ -120,21 +130,24 @@ app-mongo-1
 
 app-nginx-1
 
-The application runs at:
-
-http://<EC2-IP>
+Application URL
+http://44.222.126.191
 
 🌍 5. Nginx Reverse Proxy
 
-infra/nginx/default.conf contains:
+Located at:
 
-SPA fallback for Angular routing
+infra/nginx/default.conf
 
-/api/ → backend:8080/
+Key Features:
 
-Static caching for JS/CSS
+Angular SPA fallback
 
-Works entirely on port 80
+Proxy /api/ → app-backend-1:8080/
+
+Static caching for Angular assets
+
+Full app served on port 80
 
 🔁 6. CI/CD – GitHub Actions
 
@@ -142,15 +155,15 @@ Workflow file:
 
 .github/workflows/deploy.yml
 
-Pipeline Includes
+Pipeline Steps
 
-Checkout code
+Checkout repository
 
-Docker Hub login
+Authenticate with Docker Hub
 
 Build frontend + backend images
 
-Push to Docker Hub
+Push images to Docker Hub
 
 SSH into EC2
 
@@ -158,7 +171,7 @@ Pull latest images
 
 Restart containers
 
-Secrets Used
+GitHub Secrets Used
 
 DOCKERHUB_USERNAME
 
@@ -171,39 +184,39 @@ SSH_USER
 SSH_PRIVATE_KEY
 
 🧪 7. Testing
-Test UI
-http://EC2-IP/
-http://EC2-IP/add
-http://EC2-IP/tutorials
+Frontend UI
+http://44.222.126.191/
+http://44.222.126.191/add
+http://44.222.126.191/tutorials
 
-Test API
-http://EC2-IP/api/
+Backend API
+http://44.222.126.191/api/
 
 
-Both UI and API verified to work via Nginx.
+Both UI and API respond correctly through Nginx.
 
 📝 8. Notes for Evaluators
 
-Docker images are built & deployed successfully
+Docker images build & deploy correctly
 
-CI/CD workflow automatically updates the server
+CI/CD workflow automatically updates the EC2 server
 
-Angular routing works via SPA fallback
+Angular routing works because of SPA fallback
 
-MongoDB is running inside Docker
+MongoDB runs inside Docker
 
-Nginx is properly configured on port 80
+Nginx reverse proxy correctly handles routing
 
-Server remains active for live demo
+EC2 instance kept active for demonstration
 
 ✅ 9. Status: Assignment Completed
 
-This assignment fully satisfies all requirements:
+All required tasks have been completed:
 
-✔ GitHub repo setup
-✔ Dockerization
-✔ Docker Hub push
-✔ EC2 deployment
-✔ Nginx reverse proxy
-✔ CI/CD with auto-deploy
-✔ Working MEAN stack app
+✔ GitHub repository setup
+✔ Dockerization (Frontend + Backend)
+✔ Docker Hub image publishing
+✔ Deployment on AWS EC2
+✔ Nginx reverse proxy configuration
+✔ CI/CD pipeline with GitHub Actions
+✔ Fully working MEAN application
